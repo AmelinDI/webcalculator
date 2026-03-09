@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Локальный калькулятор</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
+      .wrap { max-width: 720px; margin: 40px auto; padding: 0 16px; }
+      .card { border: 1px solid rgba(127,127,127,.35); border-radius: 12px; padding: 16px; }
+      .row { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 12px; align-items: end; }
+      label { display: block; font-size: 12px; opacity: .8; margin-bottom: 6px; }
+      input, select, button { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); background: transparent; font-size: 16px; }
+      button { cursor: pointer; }
+      .actions { margin-top: 12px; display: flex; gap: 12px; }
+      .result { margin-top: 14px; font-size: 18px; }
+      .muted { opacity: .75; font-size: 12px; margin-top: 6px; }
+      .error { color: #c62828; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h2>Калькулятор (локально в браузере)</h2>
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="a">A</label>
+            <input id="a" type="number" step="any" value="1" />
+          </div>
+          <div>
+            <label for="op">Операция</label>
+            <select id="op">
+              <option value="+">+</option>
+              <option value="-">−</option>
+              <option value="*">×</option>
+              <option value="/">÷</option>
+            </select>
+          </div>
+          <div>
+            <label for="b">B</label>
+            <input id="b" type="number" step="any" value="2" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="calcBtn" type="button">Посчитать</button>
+          <button id="swapBtn" type="button">Поменять A↔B</button>
+        </div>
+
+        <div id="out" class="result"></div>
+        <div class="muted">API: <code>POST /api/calc</code> с JSON <code>{"a":1,"b":2,"op":"+"}</code></div>
+      </div>
+    </div>
+
+    <script>
+      const aEl = document.getElementById("a");
+      const bEl = document.getElementById("b");
+      const opEl = document.getElementById("op");
+      const outEl = document.getElementById("out");
+      const calcBtn = document.getElementById("calcBtn");
+      const swapBtn = document.getElementById("swapBtn");
+
+      function num(el) {
+        const v = Number(el.value);
+        return Number.isFinite(v) ? v : 0;
+      }
+
+      function setOut(text, isError) {
+        outEl.textContent = text;
+        outEl.classList.toggle("error", !!isError);
+      }
+
+      async function calc() {
+        setOut("Считаю…");
+        const payload = { a: num(aEl), b: num(bEl), op: opEl.value };
+        const res = await fetch("/api/calc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setOut(data.error ? `Ошибка: ${data.error}` : `Ошибка HTTP ${res.status}`, true);
+          return;
+        }
+
+        setOut(`Результат: ${data.result}`);
+      }
+
+      calcBtn.addEventListener("click", () => calc().catch((e) => setOut(`Ошибка: ${e}`, true)));
+      swapBtn.addEventListener("click", () => {
+        const t = aEl.value;
+        aEl.value = bEl.value;
+        bEl.value = t;
+      });
+
+      ["keydown", "change"].forEach((evt) => {
+        document.addEventListener(evt, (e) => {
+          if (evt === "keydown" && e.key !== "Enter") return;
+          if (e.target === aEl || e.target === bEl || e.target === opEl) {
+            calc().catch((er) => setOut(`Ошибка: ${er}`, true));
+          }
+        });
+      });
+
+      calc().catch(() => {});
+    </script>
+  </body>
+</html>
