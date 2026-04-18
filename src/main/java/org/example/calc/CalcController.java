@@ -24,6 +24,13 @@ public class CalcController {
                 }
                 yield a / b;
             }
+            case "%" -> {
+                if (b == 0.0) {
+                    throw new IllegalArgumentException("Division by zero");
+                }
+                yield a % b;
+            }
+            case "^" -> Math.pow(a, b);
             default -> throw new IllegalArgumentException("Unsupported operation: " + op);
         };
 
