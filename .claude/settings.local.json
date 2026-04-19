@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+      "mcp__google-search__*",
+      "Bash(mvn compile *)",
+      "Bash(mvn test *)",
+      "Bash(git -C C:/Users/Dmitriy/IdeaProjects/untitled log --all --oneline -- .claude/skills/dev.md)",
+      "Bash(git -C C:/Users/Dmitriy/IdeaProjects/untitled status -u .claude/)"
+    ]
+  }
+}
