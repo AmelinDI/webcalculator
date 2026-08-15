@@ -48,6 +48,7 @@
         <div class="actions">
           <button id="calcBtn" type="button">Посчитать</button>
           <button id="swapBtn" type="button">Поменять A↔B</button>
+          <button id="logoutBtn" type="button" style="margin-left:auto">Выйти</button>
         </div>
 
         <div id="out" class="result"></div>
@@ -68,6 +69,11 @@
         return Number.isFinite(v) ? v : 0;
       }
 
+      function csrfToken() {
+        const m = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+        return m ? decodeURIComponent(m[1]) : "";
+      }
+
       function setOut(text, isError) {
         outEl.textContent = text;
         outEl.classList.toggle("error", !!isError);
@@ -78,7 +84,10 @@
         const payload = { a: num(aEl), b: num(bEl), op: opEl.value };
         const res = await fetch("/api/calc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": csrfToken(),
+          },
           body: JSON.stringify(payload),
         });
 
@@ -92,6 +101,13 @@
       }
 
       calcBtn.addEventListener("click", () => calc().catch((e) => setOut(`Ошибка: ${e}`, true)));
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await fetch("/logout", {
+          method: "POST",
+          headers: { "X-XSRF-TOKEN": csrfToken() },
+        });
+        location.href = "/login.html";
+      });
       swapBtn.addEventListener("click", () => {
         const t = aEl.value;
         aEl.value = bEl.value;

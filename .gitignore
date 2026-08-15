@@ -38,3 +38,6 @@ build/
 ### Mac OS ###
 .DS_Store
 /CLAUDE.md
+
+### curl-артефакты ручной проверки ###
+/cookies.txt

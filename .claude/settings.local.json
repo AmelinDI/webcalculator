@@ -4,10 +4,21 @@
       "WebSearch",
       "WebFetch",
       "mcp__google-search__*",
-      "Bash(mvn compile *)",
-      "Bash(mvn test *)",
-      "Bash(git -C C:/Users/Dmitriy/IdeaProjects/untitled log --all --oneline -- .claude/skills/dev.md)",
-      "Bash(git -C C:/Users/Dmitriy/IdeaProjects/untitled status -u .claude/)"
+      "Bash(mvn *)",
+      "Bash(git *)",
+      "Bash(curl *)",
+      "Bash(javap *)",
+      "Bash(awk *)",
+      "Bash(rm *)",
+      "Bash(tasklist *)",
+      "Bash(wmic *)",
+      "Bash(powershell *)",
+      "Bash(netstat *)",
+      "Bash(taskkill *)",
+      "Bash(unzip *)",
+      "Bash(grep *)",
+      "Read(C:/Users/Dmitriy/IdeaProjects/untitled/**)",
+      "Edit(C:/Users/Dmitriy/**)"
     ]
   }
 }
